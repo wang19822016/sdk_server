@@ -1,0 +1,91 @@
+/*
+
+1: 注释 // \/**\/
+2: 语句可以不用分号
+3: 变量定义
+def a=1
+def int a = 1
+int a = 1
+
+3: 函数定义，参数无类型，可以不用return，调用时可以不加括号
+string func1(arg1, arg2) {}
+def func1(arg1, arg2) {}
+def string func1(arg1, arg2) {}
+
+4: 闭包
+def xxx = {paramters -> code}  //或者
+def xxx = {无参数，纯code}  这种case不需要->符号
+
+5: 概念
+一个构建叫做project，project包含多个task来完成实际操作。project包含build.gradle和settings.gradle。先执行settings.gradle，后执行
+build.gradle。gradle task会构建一个gradle对象、build.gradle构建project对象、settings.gradle构建settings对象。settings.gradle
+通过include引入多个工程或者设定一些参数。
+project对象通过apply方法加载插件来添加task。
+
+task name {} 定义一个task，task附带一堆方法。
+
+gradle中大量对象有delegate，在执行一些找不到的方法和属性时会通过它来尝试调用。
+
+build.gradle由多个statements和script blocks组成，statements包括method calls\property assignments\local variable definitions。
+script blocks是一个method call，它使用一个闭包做参数，闭包被当作方法的delegate来执行。默认定义了allprojects buildscript等script block。
+
+如果一个script block内定义新的方法，不是覆盖预定义方法，这个新方法叫dynamic method，它会插入configuration对象，然后执行。
+
+gradle projects
+gradle tasks
+gradle project-path:task
+gradle task
+
+ */
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+    }
+}
+
+group 'com.seastar'
+version '2.0.0'
+
+/* 引入插件，获得需要的task */
+apply plugin: 'java'
+//apply plugin: 'eclipse'
+//apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+//apply plugin: 'war'
+
+jar {
+    baseName = 'sdk'
+    version = '2'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+/* 设定依赖 */
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-data-redis")
+    compile("org.springframework.boot:spring-boot-starter-mail")
+    //compile("org.springframework.boot:spring-boot-starter-actuator")
+    //compile("org.springframework.boot:spring-boot-starter-aop")
+    //compile("org.springframework.boot:spring-boot-starter-security")
+    // 热更工具
+    compile("org.springframework.boot:spring-boot-devtools")
+
+    compile("org.apache.httpcomponents:httpclient:4.5.2")
+    compile("mysql:mysql-connector-java")
+
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+
+}

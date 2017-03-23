@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>SeaStar</title>
+
+    <style>
+        div {
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        button {
+            margin-bottom: 10px;
+            width: 140px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #0d8fff;
+            font-size: medium;
+        }
+    </style>
+    <script>
+        function onSuccess() {
+            var card = document.getElementById("orderid").value;
+            window.jsObj.success(card);
+        }
+    </script>
+</head>
+<body>
+<div>
+    <button type="button" onclick="onSuccess()">支付成功</button>
+    <input type="hidden" name="orderid" id="orderid" th:value="${orderid}"/>
+</div>
+</body>
+</html>

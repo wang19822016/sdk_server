@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>海星充值</title>
+
+    <style>
+        div {
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        button {
+            margin-bottom: 10px;
+            width: 140px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #0d8fff;
+            font-size: medium;
+        }
+
+
+    </style>
+    <script>
+        window.paypalCheckoutReady = function () {
+            paypal.checkout.setup('H7TTUJU2LPVC4', {
+                environment: 'sandbox',
+                container: 'myContainer'
+            });
+        };
+
+        function google() {
+            window.jsObj.google();
+        }
+
+        function mycard() {
+            window.jsObj.mycard();
+        }
+    </script>
+    <script src="https://www.paypalobjects.com/api/checkout.js" async="async"></script>
+</head>
+<body>
+
+<div class="container">
+    <div th:if="${google}">
+        <button type="button" onclick="google()">Google</button>
+    </div>
+    <div th:if="${mycard}">
+        <button type="button" onclick="mycard()">Mycard</button>
+    </div>
+    <div th:if="${paypal}">
+        <form id="myContainer" method="post" action="pay/paypal/create">
+            <input type="hidden" name="sku" th:value="${sku}"/>
+            <input type="hidden" name="customerId" th:value="${customer}"/>
+            <input type="hidden" name="serverId" th:value="${server}"/>
+            <input type="hidden" name="extra" th:value="${extra}"/>
+            <input type="hidden" name="token" th:value="${token}"/>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
