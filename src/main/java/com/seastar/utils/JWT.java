@@ -159,9 +159,9 @@ public class JWT {
 
     public JWT() {}
 
-    public JWT(long expired, long userId, String username, int appId, int payType, int loginType, String key) {
+    public JWT(long userId, String username, int appId, int payType, int loginType, String key) {
         payload.setIat(System.currentTimeMillis() / 1000);
-        payload.setExp(expired / 1000);
+        payload.setExp((System.currentTimeMillis() + 180 * 24 * 60 * 60 * 1000) / 1000);
         payload.setSub(username);
         payload.setUserId(userId);
         payload.setUsername(username);

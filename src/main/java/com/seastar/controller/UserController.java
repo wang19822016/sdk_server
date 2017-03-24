@@ -174,13 +174,12 @@ public class UserController {
         }
 
         // 生成token
-        long expires_in = System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000;
-        JWT jwt = new JWT(expires_in, userBase.getId(), userBase.getName(), req.getAppId(), app.getPayType(), req.getType(), app.getSecret());
-        userTokenDao.save(jwt.getToken());
+        JWT jwt = new JWT(userBase.getId(), userBase.getName(), req.getAppId(), app.getPayType(), req.getType(), app.getSecret());
+        userTokenDao.save(jwt);
 
         UserTokenRsp rsp = new UserTokenRsp();
         rsp.setAccess_token(jwt.getToken());
-        rsp.setExpires_in(expires_in);
+        rsp.setExpires_in(jwt.getPayload().getExp());
         rsp.setToken_type("Bearer");
 
         logger.info("登录成功, username: {}, token: {}", httpUsername, jwt.getToken());
