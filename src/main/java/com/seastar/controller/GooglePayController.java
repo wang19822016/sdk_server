@@ -78,7 +78,7 @@ public class GooglePayController {
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
         }
 
-        AppGoogle appGoogle = appGoogleRepo.findOne(jwt.getPayload().getAppId());
+        AppGoogle appGoogle = appGoogleRepo.findOne(2);//jwt.getPayload().getAppId());
         if (appGoogle == null || appGoogle.getKey().isEmpty()) {
             logger.error("没有Google Key， username: {}, appId: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString());
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);

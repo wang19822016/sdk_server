@@ -160,8 +160,9 @@ public class JWT {
     public JWT() {}
 
     public JWT(long userId, String username, int appId, int payType, int loginType, String key) {
-        payload.setIat(System.currentTimeMillis() / 1000);
-        payload.setExp((System.currentTimeMillis() + 180 * 24 * 60 * 60 * 1000) / 1000);
+        long curTime = System.currentTimeMillis() / 1000;
+        payload.setIat(curTime);
+        payload.setExp(curTime + 200 * 24 * 60 * 60); // 保存200天
         payload.setSub(username);
         payload.setUserId(userId);
         payload.setUsername(username);
