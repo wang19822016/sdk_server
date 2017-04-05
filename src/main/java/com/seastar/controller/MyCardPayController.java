@@ -76,6 +76,7 @@ public class MyCardPayController {
     private HttpUtils httpUtils = new HttpUtils();
     private ObjectMapper objectMapper = new ObjectMapper();
     private Logger logger = LoggerFactory.getLogger(MyCardPayController.class);
+    private Logger bossLogger = LoggerFactory.getLogger("boss");
 
     @Authorization
     @RequestMapping(value = "/api/pay/mycard/authcode", method = RequestMethod.POST)
@@ -356,6 +357,9 @@ public class MyCardPayController {
                                 payInfo.setCurrency_used(currency);
                                 payInfo.setSandbox(trade.get("sandBoxMode").asText().equals("true") ? Const.SANDBOX : Const.PRODUCTION);
                                 payInfo.setExtra(Utils.b64encode(trade.get("cparam").asText()));
+
+                                bossLogger.info("{}", payInfo.toString());
+
                                 if (!payRepo.save(payInfo)) {
                                     logger.error("订单重复使用，或者数据库错误, origin: {}", objectMapper.writeValueAsString(payInfo));
                                 }

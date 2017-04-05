@@ -17,7 +17,24 @@
 
         <!-- 日志文件最大大小 -->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>200MB</MaxFileSize>
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- boss用日志 -->
+    <appender name="BOSS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/boss.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志保留365天 -->
+            <maxHistory>365</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg %n</pattern>
+        </encoder>
+
+        <!-- 日志文件最大大小 -->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
 
@@ -35,4 +52,9 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </logger>
+
+    <logger name="boss" level="INFO" additivity="false">
+        <appender-ref ref="BOSS" />
+    </logger>
+
 </configuration>

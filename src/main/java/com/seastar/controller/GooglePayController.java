@@ -66,6 +66,7 @@ public class GooglePayController {
     private PushTask pushTask;
 
     private Logger logger = LoggerFactory.getLogger(GooglePayController.class);
+    private Logger bossLogger = LoggerFactory.getLogger("boss");
     private ObjectMapper mapper = new ObjectMapper();
 
     @Authorization
@@ -131,6 +132,9 @@ public class GooglePayController {
         payInfo.setExtra(Utils.b64encode(req.cparam));
         payInfo.setCreateTime(new Date());
         payInfo.setStatus(0);
+
+        bossLogger.info("{}", payInfo.toString());
+
         if (!payRepo.save(payInfo)) {
             logger.error("入库失败，不是重复提交就是数据库有问题， username: {}, appId: {}, order:{}, sku: {}, origin: {}",
                     jwt.getPayload().getUsername(),

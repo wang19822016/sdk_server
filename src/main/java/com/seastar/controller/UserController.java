@@ -55,6 +55,7 @@ public class UserController {
     private String mailContent;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private Logger bossLogger = LoggerFactory.getLogger("boss");
 
     /**
      * 帐号名注册
@@ -216,6 +217,13 @@ public class UserController {
         userBaseDao.save(userBase);
 
         logger.info("更新帐号邮箱成功, username: {}, token: {}", jwt.getPayload().getUsername(), jwt.getToken());
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Authorization
+    @RequestMapping(value = "/api/user/log", method = RequestMethod.POST)
+    public ResponseEntity<Void> onUserLog(@Token JWT jwt, @RequestBody UserLog log) {
+        bossLogger.info("{} {} {} {}", jwt.getPayload().getAppId(), jwt.getPayload().getUserId(), jwt.getPayload().getLoginType(), log.toString());
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

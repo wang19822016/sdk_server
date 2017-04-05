@@ -54,6 +54,7 @@ public class ApplePayController {
     private HttpUtils httpUtils = new HttpUtils();
 
     private Logger logger = LoggerFactory.getLogger(ApplePayController.class);
+    private Logger bossLogger = LoggerFactory.getLogger("boss");
 
     @Authorization
     @RequestMapping(value = "/api/pay/apple", method = RequestMethod.POST)
@@ -147,6 +148,9 @@ public class ApplePayController {
         payInfo.setExtra(Utils.b64encode(req.cparam));
         payInfo.setCreateTime(new Date());
         payInfo.setStatus(0);
+
+        bossLogger.info("{}", payInfo.toString());
+
         if (!payRepo.save(payInfo)) {
             logger.error("入库失败，不是重复提交就是数据库有问题， username: {}, appId: {}, order:{}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), order, req.toString());
             return new ResponseEntity<PayRsp>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -67,6 +67,29 @@ public class PayInfo {
     @Column(name = "extra", nullable = true, length = 200)
     private String extra;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", order='" + order + '\'' +
+                ", appId=" + appId +
+                ", userId=" + userId +
+                ", customerId='" + customerId + '\'' +
+                ", serverId='" + serverId + '\'' +
+                ", status=" + status +
+                ", sku='" + sku + '\'' +
+                ", price='" + price + '\'' +
+                ", currency='" + currency + '\'' +
+                ", currency_used='" + currency_used + '\'' +
+                ", channelType=" + channelType +
+                ", channelOrder='" + channelOrder + '\'' +
+                ", createTime=" + createTime +
+                ", notifyTime=" + notifyTime +
+                ", sandbox=" + sandbox +
+                ", extra='" + extra + '\'' +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }
