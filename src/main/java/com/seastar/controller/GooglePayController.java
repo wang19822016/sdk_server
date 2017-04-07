@@ -79,7 +79,7 @@ public class GooglePayController {
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
         }
 
-        AppGoogle appGoogle = appGoogleRepo.findOne(2);//jwt.getPayload().getAppId());
+        AppGoogle appGoogle = appGoogleRepo.findOne(jwt.getPayload().getAppId());
         if (appGoogle == null || appGoogle.getKey().isEmpty()) {
             logger.error("没有Google Key， username: {}, appId: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString());
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
@@ -103,7 +103,7 @@ public class GooglePayController {
         // 验证
         boolean result = verifyGoogleIap(appGoogle.getKey(), signedData, req.googleSignature);
         if (!result) {
-            logger.error("google验证失败， username: {}, appId: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString());
+            logger.error("google验证失败， username: {}, appId: {}, origin: {}, key: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString(), appGoogle.getKey());
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
         }
 
