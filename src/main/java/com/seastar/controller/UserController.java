@@ -11,19 +11,22 @@ import com.seastar.config.annotation.Authorization;
 import com.seastar.config.annotation.Token;
 import com.seastar.utils.JWT;
 import com.seastar.utils.Utils;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.security.GeneralSecurityException;
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Created by osx on 17/3/6.
@@ -41,18 +44,6 @@ public class UserController {
 
     @Autowired
     private UserTokenDao userTokenDao;
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Value("${mail.from}")
-    private String mailFrom;
-
-    @Value("${mail.subject}")
-    private String mailSubject;
-
-    @Value("${mail.content}")
-    private String mailContent;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
     private Logger bossLogger = LoggerFactory.getLogger("boss");
@@ -277,18 +268,7 @@ public class UserController {
 
                 UserBase userBase = userBaseDao.findOneByName(userName);
                 if (userBase != null && !userBase.getEmail().isEmpty()) {
-                    String replaceStr = "|PWD|";
-                    String text = mailContent;
-                    text.replaceAll(replaceStr, userBase.getPassword());
-
-                    // 发送邮件
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(mailFrom);
-                    message.setTo(userBase.getEmail());
-                    message.setSubject(mailSubject);
-                    message.setText(text);
-
-                    mailSender.send(message);
+                    sendMail(userBase.getEmail(), userBase.getName(), userBase.getPassword());
                 }
             }
         }
@@ -318,5 +298,70 @@ public class UserController {
         rsp.code = "63";
         rsp.codeDesc = "no user";
         return rsp;
+    }
+
+    private Session session;
+
+    private void sendMail(String mailTo, String mailUsername, String mailPassword) {
+        String username = "forgetpwd@vrseastar.com";
+        String password = "Aa1234#.";
+        String subject = "Get back your Seastar password";
+        String content = "Hello!\n\nyour accout : " + mailUsername + "\nyour password : " + mailPassword + "\n\nPlease keep your account information in mind, do not share it with anyone.";
+        content += "\n\n\n\n";
+        content += "您好：\n\n您的账号：" + mailUsername + "\n您的密碼：" + mailPassword + "\n\n請小心保管您的密碼，切勿與他人共享。";
+        if (session == null) {
+            Properties prop = new Properties();
+            //协议
+            prop.setProperty("mail.transport.protocol", "smtp");
+            //服务器
+            prop.setProperty("mail.smtp.host", "smtp.exmail.qq.com");
+            //端口
+            prop.setProperty("mail.smtp.port", "465");
+            //使用smtp身份验证
+            prop.setProperty("mail.smtp.auth", "true");
+            //使用SSL，企业邮箱必需！
+            //开启安全协议
+            MailSSLSocketFactory sf = null;
+            try {
+                sf = new MailSSLSocketFactory();
+                sf.setTrustAllHosts(true);
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
+            prop.put("mail.smtp.ssl.enable", "true");
+            prop.put("mail.smtp.ssl.socketFactory", sf);
+
+
+            session = Session.getDefaultInstance(prop, new MyAuthenricator(username, password));
+            //session.setDebug(true);
+        }
+
+        MimeMessage mimeMessage = new MimeMessage(session);
+        try {
+            mimeMessage.setFrom(new InternetAddress(username));
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setSentDate(new Date());
+            mimeMessage.setText(content);
+            mimeMessage.saveChanges();
+            Transport.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static class MyAuthenricator extends Authenticator {
+        String u = null;
+        String p = null;
+
+        public MyAuthenricator(String u, String p) {
+            this.u = u;
+            this.p = p;
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(u, p);
+        }
     }
 }
