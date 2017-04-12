@@ -179,12 +179,12 @@ public class PushTask {
 
                 // 开始推送
                 HttpUtils.HttpResp httpResp = httpUtils.post(item.url, item.data, headers);
-                if (httpResp.code == 200 && httpResp.body.equals(trim(item.order))) {
+                if (httpResp.code == 200) {// && httpResp.body.equals(trim(item.order))) {
                     // 推送成功
                     try {
-                        jdbcTemplate.update("update pay_info set status=?, notifyTime=now() where `order`=?", 0, item.order);
+                        jdbcTemplate.update("update pay_info set status=?, notify_time=now() where `order`=?", 0, item.order);
 
-                        logger.info("push pay success: {} {}", item.url, item.data);
+                        logger.info("push pay success: {} {} {} {}", item.url, item.data, httpResp.code, httpResp.body);
                     } catch (DataAccessException e) {
                         e.printStackTrace();
                     }
@@ -200,7 +200,7 @@ public class PushTask {
                     } else {
                         // 彻底失败
                         try {
-                            jdbcTemplate.update("update pay_info set status=?, notifyTime=now() where `order`=?", 1, item.order);
+                            jdbcTemplate.update("update pay_info set status=?, notify_time=now() where `order`=?", 1, item.order);
 
                             logger.info("push pay fail: {} {}", item.url, item.data);
                         } catch (DataAccessException e) {
