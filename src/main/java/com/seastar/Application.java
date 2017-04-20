@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 // 部署到tomcat中时，使用SpringBootServletInitializer
 public class Application {
+
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}

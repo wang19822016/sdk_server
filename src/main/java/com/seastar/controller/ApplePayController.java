@@ -75,21 +75,22 @@ public class ApplePayController {
         int isSandbox = Const.PRODUCTION;
         // 在数据库中设置成正式环境，但苹果还是沙盒环境时重新去沙盒环境验证
         if (appleIapReceipt.status == 21007) {
-            try {
-                logger.error("正式环境失败，进行沙盒验证，正式环境返回的数据： {} ----- {}", req.toString(), objectMapper.writeValueAsString(appleIapReceipt));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            /*
             appleIapReceipt = doIapVerify(req.receipt, true);
             if (appleIapReceipt == null) {
                 logger.error("沙盒环境验证失败, username: {}, appId: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString());
                 return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
-            }
+            }*/
 
             // 强制本次交易记录为沙盒
             isSandbox = Const.SANDBOX;
+        } else if (appleIapReceipt.status != 0) {
+            logger.error("正式环境验证失败, username: {}, appId: {}, status: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), appleIapReceipt.status, req.toString());
+            return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
         }
 
+
+        /*
         if (appleIapReceipt.status != 0) {
             logger.error("所有环境验证失败, username: {}, appId: {}, status: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), appleIapReceipt.status, req.toString());
             return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
@@ -128,6 +129,7 @@ public class ApplePayController {
                 return new ResponseEntity<PayRsp>(HttpStatus.BAD_REQUEST);
             }
         }
+        */
 
         Sku sku = skuRepo.findOne(jwt.getPayload().getAppId(), req.productId);
         if (sku == null) {
