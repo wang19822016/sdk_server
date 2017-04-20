@@ -1,5 +1,6 @@
 package com.seastar.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seastar.async.PushTask;
@@ -74,6 +75,11 @@ public class ApplePayController {
         int isSandbox = Const.PRODUCTION;
         // 在数据库中设置成正式环境，但苹果还是沙盒环境时重新去沙盒环境验证
         if (appleIapReceipt.status == 21007) {
+            try {
+                logger.error("正式环境失败，进行沙盒验证，正式环境返回的数据： {} ----- {}", req.toString(), objectMapper.writeValueAsString(appleIapReceipt));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             appleIapReceipt = doIapVerify(req.receipt, true);
             if (appleIapReceipt == null) {
                 logger.error("沙盒环境验证失败, username: {}, appId: {}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), req.toString());
@@ -188,6 +194,7 @@ public class ApplePayController {
         //receiptJsonObj.put("password", "");
 
         String verifyBody = "{\"receipt-data\" : \"" + receiptData + "\"}";
+        //String verifyBody = "{\"receipt-data\" : \"" + receiptData + "\", \"password\" : \"\"}";
 
         Map<String, String> headers = new HashMap<>();
         headers.put("content-type", "application/json; charset=UTF-8");

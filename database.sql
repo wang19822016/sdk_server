@@ -88,7 +88,7 @@ CREATE TABLE mycard_trade (
   `trade_date_time` datetime DEFAULT NULL,
   KEY (`mycard_trade_no`)
 ) DEFAULT CHARSET=utf8;
-
+/*
 DROP TABLE IF EXISTS auth_user;
 CREATE TABLE auth_user (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -99,7 +99,7 @@ CREATE TABLE auth_user (
   UNIQUE KEY `username` (`username`)
 ) AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-/*
+
 DROP TABLE IF EXISTS operative;
 CREATE TABLE operative (
   id INT(20) PRIMARY KEY AUTO_INCREMENT,

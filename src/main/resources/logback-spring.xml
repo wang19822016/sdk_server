@@ -16,9 +16,11 @@
         </encoder>
 
         <!-- 日志文件最大大小 -->
+        <!--
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
+        -->
     </appender>
 
     <!-- boss用日志 -->
@@ -33,9 +35,11 @@
         </encoder>
 
         <!-- 日志文件最大大小 -->
+        <!--
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
+        -->
     </appender>
 
     <logger name="com.seastar.controller" level="INFO" additivity="false">

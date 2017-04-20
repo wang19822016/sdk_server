@@ -146,8 +146,9 @@ public class GooglePayController {
         }
 
         if (!app.getNotifyUrl().isEmpty()) {
-            logger.error("没有配置通知地址, username: {}, appId: {}, order:{}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), order, req.toString());
             pushTask.submit(app.getNotifyUrl(), payInfo, app.getSecret());
+        } else {
+            logger.error("没有配置通知地址, username: {}, appId: {}, order:{}, origin: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId(), order, req.toString());
         }
 
         PayRsp rsp = new PayRsp();
