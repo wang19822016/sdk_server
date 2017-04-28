@@ -21,14 +21,14 @@
         }
     </style>
     <script>
-        function oncancel() {
-            window.jsObj.cancel();
+        function onFail() {
+            window.jsObj.fail();
         }
     </script>
 </head>
 <body>
 <div>
-    <button type="button" onclick="oncancel()">取消支付</button>
+    <a href="#" onclick="onFail()">Cancel payment, click to return</a>
 </div>
 </body>
 </html>

@@ -44,10 +44,10 @@
 
 <div class="container">
     <div th:if="${google}">
-        <button type="button" onclick="google()">Google</button>
+        <img src="/images/google.jpg" alt="Google Pay" onclick="google()" width="140px" height="80px"></img>
     </div>
     <div th:if="${mycard}">
-        <button type="button" onclick="mycard()">Mycard</button>
+        <img src="/images/mycard.jpg" alt="MyCard Pay" onclick="mycard()" width="140px" height="40px"></img>
     </div>
     <div th:if="${paypal}">
         <form id="myContainer" method="post" action="pay/paypal/create">

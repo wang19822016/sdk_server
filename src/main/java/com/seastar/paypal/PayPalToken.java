@@ -20,6 +20,11 @@ public class PayPalToken {
 
     private String nonce;
 
+    private long expiresTime = 0;
+    public boolean isExpired() {
+        return System.currentTimeMillis() >= this.expiresTime;
+    }
+
     public String getNonce() {
         return nonce;
     }
@@ -66,5 +71,7 @@ public class PayPalToken {
 
     public void setExpires_in(int expires_in) {
         this.expires_in = expires_in;
+
+        this.expiresTime = this.expires_in * 1000 + System.currentTimeMillis() - 3000; // 刨除3秒的时间，作为返回token的时延
     }
 }

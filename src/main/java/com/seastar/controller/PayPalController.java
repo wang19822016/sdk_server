@@ -70,7 +70,6 @@ public class PayPalController {
     private PushTask pushTask;
 
     private PayPalToken payPalToken;
-    private long payPalTokenLiveTime = 0;
     private PayPal payPal = new PayPal();
     private ConcurrentHashMap<String, PayPalTransition> transitions = new ConcurrentHashMap<>();
 
@@ -183,7 +182,6 @@ public class PayPalController {
             transition.setPayment(payment);
             transitions.put(payment.getId(), transition);
         } else {
-
             logger.error("生成交易失败, username: {}, appId: {}", jwt.getPayload().getUsername(), jwt.getPayload().getAppId());
             return "redirect:/api/pay/paypal/fail";
         }
@@ -251,7 +249,6 @@ public class PayPalController {
                     if (payment != null && payment.getPayerId() != null && payment.getPaymentExecuteUrl() != null && !payment.getState().equals("failed")) {
                         Payment payment1 = payPal.executePayment(trans.getPayment().getPaymentExecuteUrl(), payment.getPayerId(), payPalToken.getToken_type(), payPalToken.getAccess_token());
                         if (payment1 != null && payment1.getPayerId() != null && payment.getState().equals("approved")) {
-
                             saveToDb(trans, payment);
                         }
 
@@ -283,6 +280,7 @@ public class PayPalController {
         payInfo.setExtra(Utils.b64encode(transition.getCustom()));
         if (!payDao.save(payInfo)) {
             // 提示错误
+            logger.error("入库失败，不是重复提交就是数据库有问题， username: {}, appId: {}, order:{}, origin: {}", payInfo.getUserId(), payInfo.getAppId(), payInfo.getOrder(), payInfo.toString());
         }
 
         // 推送
@@ -292,11 +290,8 @@ public class PayPalController {
     }
 
     private synchronized void refreshToken() {
-        if (payPalToken == null || System.currentTimeMillis() >= payPalTokenLiveTime) {
+        if (payPalToken == null || payPalToken.isExpired()) {
             payPalToken = payPal.refreshToken(urlOAuth, clientId, secret);
-            if (payPalToken != null) {
-                payPalTokenLiveTime = payPalToken.getExpires_in() * 1000 + System.currentTimeMillis();
-            }
         }
     }
 }

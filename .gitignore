@@ -5,4 +5,6 @@ build/
 gradle/
 logs/
 out/
+classes/
+target/
 \350\256\276\350\256\241\346\226\207\346\241\243
